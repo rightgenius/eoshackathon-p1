@@ -63,13 +63,6 @@ class charge : public eosio::contract {
         	});
         }
 
-        void create(uint64_t payment_code, account_name aname){
-            chargeinfos newinfo(_self, aname);
-            newinfo.emplace(aname, [&]( auto& a ){
-                a.paymentcode = payment_code;
-                a.state = 0;
-            });
-        }
 
         void printinfo(uint64_t payment_code, account_name payer) {
         	chargeinfos exist_charge_infos = chargeinfos(_self, payer);
@@ -94,4 +87,4 @@ class charge : public eosio::contract {
 
 };
 
-EOSIO_ABI( charge, (reqcharge)(printinfo)(confirm)(create) )
+EOSIO_ABI( charge, (reqcharge)(printinfo)(confirm) )
