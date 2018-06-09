@@ -54,6 +54,7 @@ class charge : public eosio::contract {
             	d.charger = charger;
             	d.quantity = quantity;
             	d.paymentcode = payment_code;
+                d.payer = payer;
                 d.state = 0;
         	});
         }
@@ -64,6 +65,7 @@ class charge : public eosio::contract {
         	charge_info info = exist_charge_infos.get(payment_code);
 			eosio::print(info.paymentcode);
             eosio::print(info.state);
+            eosio::print(info.payer);
         }
 
         void confirm(uint64_t payment_code, account_name payer) {
@@ -81,4 +83,4 @@ class charge : public eosio::contract {
 
 };
 
-EOSIO_ABI( charge, (reqcharge)(printinfo)(transfer) )
+EOSIO_ABI( charge, (reqcharge)(printinfo)(confirm) )
