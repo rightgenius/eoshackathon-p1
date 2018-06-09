@@ -9,7 +9,7 @@ using namespace std;
 
 
 class charge : public eosio::contract {
-	static const account_name charge_info_account = N(charge.acct);
+	static const account_name charge_info_account = N(chargeinfos);
 
 	private:
     	//@abi table chargeinfos i64
@@ -24,7 +24,7 @@ class charge : public eosio::contract {
 
         };
 
-        typedef eosio::multi_index <charge_info_account, charge_info> chargeinfos;
+        typedef eosio::multi_index <N(chargeinfos), charge_info> chargeinfos;
 
         
 
@@ -49,8 +49,11 @@ class charge : public eosio::contract {
             eosio::print(payer);
             eosio_assert(quantity.is_valid(), "invalid quantity");
         	eosio_assert(quantity.amount > 0, "must issue positive quantity");
-        	chargeinfos exist_charge_infos = chargeinfos(_self, payer);
-        	exist_charge_infos.emplace(charger, [&](auto &d) {
+
+            require_auth(charger);
+
+        	chargeinfos exist_charge_infos = chargeinfos(_self, charger);
+        	exist_charge_infos.emplace(_self, [&](auto &d) {
             	d.charger = charger;
             	d.quantity = quantity;
             	d.paymentcode = payment_code;
@@ -59,21 +62,28 @@ class charge : public eosio::contract {
         	});
         }
 
-
-        void printinfo(uint64_t payment_code, account_name payer) {
-        	chargeinfos exist_charge_infos = chargeinfos(_self, payer);
-        	charge_info info = exist_charge_infos.get(payment_code);
-			eosio::print(info.paymentcode);
-            eosio::print(info.state);
-            eosio::print(info.payer);
+        void create(uint64_t payment_code, account_name aname){
+            chargeinfos newinfo(_self, aname);
+            newinfo.emplace(aname, [&]( auto& a ){
+                a.paymentcode = payment_code;
+                a.state = 0;
+            });
         }
 
-        void confirm(uint64_t payment_code, account_name payer) {
-            chargeinfos exist_charge_infos = chargeinfos(_self, payer);
+        void printinfo(uint64_t payment_code, account_name payer, account_name charger) {
+        	chargeinfos exist_charge_infos = chargeinfos(_self, charger);
+        	charge_info info = exist_charge_infos.get(payment_code);
+			eosio::print(info.paymentcode, "\n");
+            eosio::print(info.state, "\n");
+            eosio::print(info.payer, "\n");
+        }
+
+        void confirm(uint64_t payment_code, account_name payer, account_name charger) {
+            chargeinfos exist_charge_infos = chargeinfos(_self, charger);
             charge_info info = exist_charge_infos.get(payment_code);
             require_auth(info.payer);
             transfer(info.payer, info.charger, info.quantity, "");
-            exist_charge_infos.modify(exist_charge_infos.get(payment_code), info.payer, [&]( auto& d) {
+            exist_charge_infos.modify(exist_charge_infos.get(payment_code), _self, [&]( auto& d) {
                 d.state = 1;     // customer provided input
             });
         }
@@ -83,4 +93,4 @@ class charge : public eosio::contract {
 
 };
 
-EOSIO_ABI( charge, (reqcharge)(printinfo)(confirm) )
+EOSIO_ABI( charge, (reqcharge)(printinfo)(confirm)(create) )
