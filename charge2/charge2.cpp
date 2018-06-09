@@ -54,6 +54,7 @@ class charge : public eosio::contract {
 
         	chargeinfos exist_charge_infos = chargeinfos(_self, charger);
         	exist_charge_infos.emplace(_self, [&](auto &d) {
+
             	d.charger = charger;
             	d.quantity = quantity;
             	d.paymentcode = payment_code;
