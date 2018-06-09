@@ -1,0 +1,14 @@
+npm-debug.log
+/node_modules
+.DS_Store
+/.idea
+/groupPurchase
+/dist
+/dev
+/release
+/distyue
+/releaseyue
+/pre
+/preyue
+/test
+/testyue

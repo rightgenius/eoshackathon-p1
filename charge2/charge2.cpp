@@ -1,10 +1,13 @@
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/print.hpp>
 #include <eosiolib/asset.hpp>
-#include <eosiolib/asset.hpp>
 #include <string>
-using std::string;
-using eosio::asset;
+#include <eosiolib/contract.hpp>
+
+using namespace eosio;
+using namespace std;
+
+
 class charge : public eosio::contract {
 	static const account_name charge_info_account = N(charge.acct);
 	static const account_name code_account = N(pay.charge3);
@@ -49,9 +52,21 @@ class charge : public eosio::contract {
 			eosio::print(info.paymentcode);
         }
 
+        void transfer(account_name from, account_name to, asset quantity, string memo){
+            require_auth( from );
+
+            print( "transfer from ", name{from}, " to ", name{to} );
+    
+            action(
+                permission_level{from, N(active)},
+                N(eosio.token), N(transfer),
+                std::make_tuple(from, to, quantity, memo)
+            ).send();
+        }
+
     
 
 
 };
 
-EOSIO_ABI( charge, (reqcharge)(printinfo) )
+EOSIO_ABI( charge, (reqcharge)(printinfo)(transfer) )
