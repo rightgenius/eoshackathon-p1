@@ -7,7 +7,8 @@ seller 像合约发起收款请求
 {
 	account_name: charger,
 	asset: quantity,
-	string: payment_code
+	string: payment_code,
+	account_name: payer_account
 }
 ```
 
@@ -22,7 +23,8 @@ buyer  轮询接口获取收款方收款信息
 - 
 ```
 {
-	string: payment_code
+	string: payment_code,
+	account_name: payer_account
 }
 ```
 
