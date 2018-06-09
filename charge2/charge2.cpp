@@ -18,8 +18,7 @@ class charge : public eosio::contract {
         	account_name payer;
             account_name charger;
             asset quantity;
-
-
+            uint8_t state;
 
             uint64_t primary_key() const { return paymentcode; }
 
@@ -41,6 +40,7 @@ class charge : public eosio::contract {
             	d.charger = charger;
             	d.quantity = quantity;
             	d.paymentcode = payment_code;
+                d.state = 0;
         	});
         }
 
@@ -49,6 +49,17 @@ class charge : public eosio::contract {
         	chargeinfos exist_charge_infos = chargeinfos(_self, payer);
         	charge_info info = exist_charge_infos.get(payment_code);
 			eosio::print(info.paymentcode);
+            eosio::print(info.state);
+        }
+
+        void confirm(uint64_t payment_code) {
+            chargeinfos exist_charge_infos = chargeinfos(_self, payer);
+            charge_info info = exist_charge_infos.get(payment_code);
+            require_auth(info.payer);
+            transfer(info.payer, info.charger, info.quantity, "");
+            exist_charge_infos.modify(info, info.payer, [&]( auto& d) {
+                d.state = 1;     // customer provided input
+            });
         }
 
         void transfer(account_name from, account_name to, asset quantity, string memo){
