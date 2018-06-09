@@ -52,7 +52,7 @@ class charge : public eosio::contract {
 
             require_auth(charger);
 
-        	chargeinfos exist_charge_infos = chargeinfos(_self, charger);
+        	chargeinfos exist_charge_infos = chargeinfos(_self, payer);
         	exist_charge_infos.emplace(_self, [&](auto &d) {
 
             	d.charger = charger;
@@ -71,16 +71,16 @@ class charge : public eosio::contract {
             });
         }
 
-        void printinfo(uint64_t payment_code, account_name payer, account_name charger) {
-        	chargeinfos exist_charge_infos = chargeinfos(_self, charger);
+        void printinfo(uint64_t payment_code, account_name payer) {
+        	chargeinfos exist_charge_infos = chargeinfos(_self, payer);
         	charge_info info = exist_charge_infos.get(payment_code);
 			eosio::print(info.paymentcode, "\n");
             eosio::print(info.state, "\n");
             eosio::print(info.payer, "\n");
         }
 
-        void confirm(uint64_t payment_code, account_name payer, account_name charger) {
-            chargeinfos exist_charge_infos = chargeinfos(_self, charger);
+        void confirm(uint64_t payment_code, account_name payer) {
+            chargeinfos exist_charge_infos = chargeinfos(_self, payer);
             charge_info info = exist_charge_infos.get(payment_code);
             require_auth(info.payer);
             transfer(info.payer, info.charger, info.quantity, "");
