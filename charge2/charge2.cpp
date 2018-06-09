@@ -73,7 +73,7 @@ class charge : public eosio::contract {
             charge_info info = exist_charge_infos.get(payment_code);
             require_auth(info.payer);
             transfer(info.payer, info.charger, info.quantity, "");
-            exist_charge_infos.modify(info, info.payer, [&]( auto& d) {
+            exist_charge_infos.modify(exist_charge_infos.get(payment_code), info.payer, [&]( auto& d) {
                 d.state = 1;     // customer provided input
             });
         }

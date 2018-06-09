@@ -6,7 +6,7 @@ cleos set contract pay.charge /eosdev/eoshackathon-p1/charge2 -p pay.charge
 
 
 #run
-cleos push action pay.charge transfer '["hello.code", "nius", "1.0000 SYS", "memo"]' -p hello.code
+#cleos push action pay.charge transfer '["hello.code", "nius", "1.0000 SYS", "memo"]' -p hello.code
 
 
 cd -
