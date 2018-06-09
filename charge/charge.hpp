@@ -19,25 +19,25 @@ class charge : public contract {
 
     public:
         charge(account_name self) : contract(self){};
-        void request_charge(account_name charger, asset quantity, string payment_code);
+        void reqcharge(account_name charger, asset quantity, string payment_code, account_name payer);
     private:
         //define of table
-        struct charge_info {
-            charge_info() {}
+        struct chargeinfo {
+            chargeinfo() {}
 
-            charge_info(account_name charger, asset quantity, string payment_code)
-                    : charger(charger), quantity(quantity), payment_code(payment_code) {
+            chargeinfo(account_name charger, asset quantity, string payment_code)
+                    : charger(charger), quantity(quantity), paymentcode(payment_code) {
             }
 
             account_name charger;
             asset quantity;
-            string payment_code;
+            string paymentcode;
 
             auto primary_key() const { return N(payment_code); }
 
         };
 
-        typedef eosio::multi_index <charge_info_account, charge_info> charge_infos;
+        typedef eosio::multi_index <charge_info_account, chargeinfo> chargeinfos;
 
 
     };
