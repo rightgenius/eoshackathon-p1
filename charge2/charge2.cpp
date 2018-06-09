@@ -18,7 +18,7 @@ class charge : public eosio::contract {
         	account_name payer;
             account_name charger;
             asset quantity;
-            uint8_t state;
+            uint64_t state;
 
             uint64_t primary_key() const { return paymentcode; }
 
@@ -26,7 +26,21 @@ class charge : public eosio::contract {
 
         typedef eosio::multi_index <charge_info_account, charge_info> chargeinfos;
 
+        
+
     public:
+        void transfer(account_name from, account_name to, asset quantity, string memo){
+            require_auth( from );
+
+            print( "transfer from ", name{from}, " to ", name{to} );
+    
+            action(
+                permission_level{from, N(active)},
+                N(eosio.token), N(transfer),
+                std::make_tuple(from, to, quantity, memo)
+            ).send();
+        }
+
         using eosio::contract::contract;
         void reqcharge(account_name charger, asset quantity, uint64_t payment_code, account_name payer) {
             eosio::print(charger);
@@ -52,7 +66,7 @@ class charge : public eosio::contract {
             eosio::print(info.state);
         }
 
-        void confirm(uint64_t payment_code) {
+        void confirm(uint64_t payment_code, account_name payer) {
             chargeinfos exist_charge_infos = chargeinfos(_self, payer);
             charge_info info = exist_charge_infos.get(payment_code);
             require_auth(info.payer);
@@ -60,18 +74,6 @@ class charge : public eosio::contract {
             exist_charge_infos.modify(info, info.payer, [&]( auto& d) {
                 d.state = 1;     // customer provided input
             });
-        }
-
-        void transfer(account_name from, account_name to, asset quantity, string memo){
-            require_auth( from );
-
-            print( "transfer from ", name{from}, " to ", name{to} );
-    
-            action(
-                permission_level{from, N(active)},
-                N(eosio.token), N(transfer),
-                std::make_tuple(from, to, quantity, memo)
-            ).send();
         }
 
     
