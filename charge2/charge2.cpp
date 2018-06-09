@@ -10,7 +10,6 @@ using namespace std;
 
 class charge : public eosio::contract {
 	static const account_name charge_info_account = N(charge.acct);
-	static const account_name code_account = N(pay.charge3);
 
 	private:
     	//@abi table chargeinfos i64
@@ -37,7 +36,7 @@ class charge : public eosio::contract {
             eosio::print(payer);
             eosio_assert(quantity.is_valid(), "invalid quantity");
         	eosio_assert(quantity.amount > 0, "must issue positive quantity");
-        	chargeinfos exist_charge_infos = chargeinfos(code_account, payer);
+        	chargeinfos exist_charge_infos = chargeinfos(_self, payer);
         	exist_charge_infos.emplace(charger, [&](auto &d) {
             	d.charger = charger;
             	d.quantity = quantity;
@@ -47,7 +46,7 @@ class charge : public eosio::contract {
 
 
         void printinfo(uint64_t payment_code, account_name payer) {
-        	chargeinfos exist_charge_infos = chargeinfos(code_account, payer);
+        	chargeinfos exist_charge_infos = chargeinfos(_self, payer);
         	charge_info info = exist_charge_infos.get(payment_code);
 			eosio::print(info.paymentcode);
         }
