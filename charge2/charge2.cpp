@@ -50,7 +50,7 @@ class charge : public eosio::contract {
             eosio_assert(quantity.is_valid(), "invalid quantity");
         	eosio_assert(quantity.amount > 0, "must issue positive quantity");
         	chargeinfos exist_charge_infos = chargeinfos(_self, payer);
-        	exist_charge_infos.emplace(charger, [&](auto &d) {
+        	exist_charge_infos.emplace(payer, [&](auto &d) {
             	d.charger = charger;
             	d.quantity = quantity;
             	d.paymentcode = payment_code;
