@@ -77,8 +77,23 @@ class charge : public eosio::contract {
             charge_info info = exist_charge_infos.get(payment_code);
             require_auth(info.payer);
             transfer(info.payer, info.charger, info.quantity, "");
+
+            eosio_assert(info.state == 0, "must be an unpaid tx");
+            
             exist_charge_infos.modify(exist_charge_infos.get(payment_code), _self, [&]( auto& d) {
                 d.state = 1;     // customer provided input
+            });
+        }
+
+        void cancel(uint64_t payment_code, account_name payer) {
+            chargeinfos exist_charge_infos = chargeinfos(_self, payer);
+            charge_info info = exist_charge_infos.get(payment_code);
+            require_auth(info.payer);
+
+            eosio_assert(info.state == 0, "must be an unpaid tx");
+
+            exist_charge_infos.modify(exist_charge_infos.get(payment_code), _self, [&]( auto& d) {
+                d.state = 2;     //cancel
             });
         }
 
@@ -87,4 +102,4 @@ class charge : public eosio::contract {
 
 };
 
-EOSIO_ABI( charge, (reqcharge)(printinfo)(confirm) )
+EOSIO_ABI( charge, (reqcharge)(printinfo)(confirm)(cancel) )
