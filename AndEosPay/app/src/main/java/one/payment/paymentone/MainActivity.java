@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.widget.ProgressBar;
 
@@ -46,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
         });
         Web3JsService s = new Web3JsService(this, BARCODE_READER_REQUEST_CODE);
         web3WebView.addJavascriptInterface(s, "eosWVJs");
-        web3WebView.loadUrl("http://10.101.1.58:9999/#");
+//        web3WebView.loadUrl("http://10.101.1.49:8080/#/");
+        web3WebView.loadUrl("file:///android_asset/index.html");
     }
 
 
