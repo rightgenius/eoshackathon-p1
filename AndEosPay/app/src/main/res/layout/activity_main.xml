@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="one.payment.paymentone.MainActivity">
+    tools:context="one.payment.paymentone.MainActivity"
+    android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,6 +23,8 @@
         <one.payment.paymentone.tool.Web3WebView
             android:id="@+id/dapp_web_view"
             android:layout_width="match_parent"
+            android:focusable="false"
+            android:focusableInTouchMode="true"
             android:layout_height="match_parent" />
 
     </LinearLayout>
