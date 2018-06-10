@@ -3,7 +3,7 @@
  */
 import React from 'react'
 import {getAccountName} from "../../util";
-import {Token_Symbol} from "../../util/conststr";
+import {Token_Symbol} from "../../eosjs/conststr";
 import FlexContainer from "../FlexContainer";
 
 class AmountInfo extends React.Component {

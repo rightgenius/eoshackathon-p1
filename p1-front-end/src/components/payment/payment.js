@@ -2,19 +2,30 @@
  * Created by Kael on 2018/6/9.
  */
 import React from 'react'
-import FlexContainer from "../../common/FlexContainer";
-import {getAccountName} from "../../util";
-import {Token_Symbol} from "../../util/conststr";
+import FlexContainer from "../../common/FlexContainer/index";
+import {getAccountName} from "../../util/index";
+import {Token_Symbol} from "../../eosjs/conststr";
+import {confirmPayRequest} from "../../eosjs";
 
 class PayMentContainer extends React.Component {
     state = {
-        pross: 0,
+        pross: -1,
     };
+
+    componentDidMount() {
+
+    }
 
     _confirm = (e) => {
         e.stopPropagation();
-        this.setState({
-            pross: 1
+        const {payMent = {}} = this.props;
+        const {paymentcode} = payMent;
+        confirmPayRequest(paymentcode).then(result => {
+            if (result) {
+                this.setState({
+                    pross: 1
+                })
+            }
         })
     };
 
@@ -27,6 +38,9 @@ class PayMentContainer extends React.Component {
 
     render() {
         const {pross} = this.state;
+        const {payMent = {}} = this.props;
+        const {charger, quantity} = payMent;
+        const quantityValue = quantity.split(Token_Symbol)[0];
         if (pross === 0) {
             return <FlexContainer style={{backgroundColor: 'transparent'}}
                                   direction='column'
@@ -43,9 +57,9 @@ class PayMentContainer extends React.Component {
                                    marginTop: '20', color: '#fff'
                                }}>
                     <div style={{fontSize: 14, marginTop: 30,}}>
-                        {getAccountName()}
+                        {charger}
                     </div>
-                    <div style={{fontSize: 36, marginTop: 124}}>10000</div>
+                    <div style={{fontSize: 36, marginTop: 124}}>{quantityValue}</div>
                     <div style={{fontSize: 12, marginTop: 8}}>{Token_Symbol}</div>
                 </FlexContainer>
                 <div style={{
@@ -79,7 +93,7 @@ class PayMentContainer extends React.Component {
                 PayMent
             </div>
             <FlexContainer direction='column'
-                           className='pay-box-container linear-background3'
+                           className={`pay-box-container ${pross === -1 ? 'linear-background7' : 'linear-background3'}`}
                            style={{
                                height: 398, width: '80%',
                                marginTop: '20', color: '#fff'
@@ -87,9 +101,22 @@ class PayMentContainer extends React.Component {
                 <div style={{fontSize: 14, marginTop: 30,}}>
                     {getAccountName()}
                 </div>
-                <div style={{fontSize: 36, marginTop: 124}}>10000</div>
+                <div style={{fontSize: 36, marginTop: 124}}>{quantityValue}</div>
                 <div style={{fontSize: 12, marginTop: 8}}>{Token_Symbol}</div>
+                <div style={{fontSize: 20, color: '#fff', marginTop: 80}}>
+                    {
+                        pross === 1 ? `confirmed` : `cancelled`
+                    }
+                </div>
             </FlexContainer>
+            <div style={{
+                width: '172', height: '56', lineHeight: '56px',
+                color: '#fff', textAlign: 'center',
+                marginTop: 40,
+                fontSize: '18', border: '1px solid #fff', borderRadius: "56"
+            }}>
+                back to pay
+            </div>
         </FlexContainer>
     }
 }

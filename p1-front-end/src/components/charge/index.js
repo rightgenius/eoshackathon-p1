@@ -6,18 +6,73 @@ import PayOneContainer from "../../common/PayOneContainer/PayOneContainer";
 import FlexContainer from "../../common/FlexContainer";
 import NumberInputer from "../../common/NumInputer";
 import {getAccountName} from "../../util";
-
+import {Toast} from 'antd-mobile'
 import './charge.less'
+import {requireCharge} from "../../eosjs";
+
 
 export default class PayContainer extends React.Component {
     state = {
         pross: 0,
-        inputValue: ''
-    }
+        inputValue: '',
+        scanerInputValue: ''
+    };
 
     componentDidMount() {
-        // console.log(this.inputRef)
+       // this.setState({
+       //     inputValue:1,
+       // },()=>{
+       //     this._requreCharge('user.a','77845')
+       // })
     }
+
+    _confirm = () => {
+        this.setState({
+            pross: 1
+        }, () => {
+            document.getElementById('scan-inputer').focus()
+        })
+    };
+
+    _resetScanInput = () => {
+        this.setState({
+            scanerInputValue: ''
+        }, () => {
+            Toast.info('Rescan...')
+        })
+    };
+
+    _requreCharge = (payer, code) => {
+        const {inputValue}=this.state;
+        if(Number(inputValue)>0){
+            requireCharge(inputValue,code,payer).then(result => {
+                if (result) {
+                    Toast.loading(`${payer} is Paying`)
+                }
+            })
+        }
+    };
+
+    _submit = () => {
+        const {scanerInputValue} = this.state;
+        try {
+            const payInfo = JSON.parse(scanerInputValue);
+            const {n, c} = payInfo;
+
+            console.log(`payInfo`,payInfo);
+            console.log(`n,c`,n,c);
+
+            if (n && c) {
+                this._requreCharge(n, c);
+            }
+            else {
+                this._resetScanInput();
+            }
+        }
+        catch (err) {
+            this._resetScanInput();
+        }
+    };
 
     render() {
         const {inputValue, pross} = this.state;
@@ -25,7 +80,6 @@ export default class PayContainer extends React.Component {
         return (
             <PayOneContainer className='linear-background1 container'
                              title='Charge'>
-
                 <FlexContainer direction='column' style={{marginTop: 87, width: '100%', color: '#fff'}}>
                     <FlexContainer justify='center' style={{width: '70%', height: 43}}>
                         {
@@ -91,14 +145,29 @@ export default class PayContainer extends React.Component {
 
                         </div>
                     }
+                    {
+                        pross === 1
+                        &&
+                        <input id='scan-inputer' value={this.state.scanerInputValue}
+                               style={{opacity: 0}}
+                               onKeyPress={e => {
+                                   if (e.key === 'Enter') {
+                                       this._submit()
+                                   }
+                               }}
+                               onChange={(e) => {
+                                   const {target} = e;
+                                   // console.log(target.value);
+                                   this.setState({
+                                       scanerInputValue: target.value
+                                   })
+                               }}
+                        />
+                    }
                 </FlexContainer>
                 <NumberInputer
                     enable={pross === 0}
-                    confirm={() => {
-                        this.setState({
-                            pross: 1
-                        })
-                    }}
+                    confirm={this._confirm}
                     del={() => {
                         if (inputValue.length > 0) {
                             this.setState({

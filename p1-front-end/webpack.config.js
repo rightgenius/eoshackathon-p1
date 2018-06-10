@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const babelpolyfill = require("babel-polyfill");
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const pxtorem = require('postcss-pxtorem');
@@ -48,15 +49,23 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(js|jsx)/, exclude: /node_modules/, loader: 'babel-loader',
+                test: /\.(js|jsx)/,
+                // exclude: /node_modules\/(?!(eosjs)\/).*/,
+                exclude: /node_modules/,
+                // // include: [
+                // //     path.resolve(__dirname, "index.jsx"),
+                // //     path.resolve(__dirname, "src"),
+                // //     path.resolve(__dirname, "node_modules/eosjs")
+                // // ],
+                loader: 'babel-loader',
                 options: {
                     plugins: [
-                        'external-helpers', // why not work?
-                        ["transform-runtime", { polyfill: false }],
-                        ["import", [{ "style": "css", "libraryName": "antd-mobile" }]]
+                        // 'external-helpers', // why not work?
+                        // ["transform-runtime", { polyfill: false }],
+                        ["import", { libraryName: "antd-mobile", style: "css" }]
                     ],
-                    presets: ['es2015', 'stage-0', 'react']
-                    // presets: [['es2015', { modules: false }], 'stage-0', 'react'] // tree-shaking
+                    // presets: ['es2015', 'stage-0', 'react']
+                    presets: [['es2015', { modules: false }], 'stage-0', 'react'] // tree-shaking
                 }
             },
             { test: /\.(jpg|png)$/, loader: "url-loader?limit=8192" },
