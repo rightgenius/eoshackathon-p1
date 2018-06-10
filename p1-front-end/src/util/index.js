@@ -1,3 +1,5 @@
+import {Session_Storage_Account, sessionReadOneData} from "./sessionStorage";
+
 export const getAccountName=()=>{
-    return 'niuspizashop'
-}
+    return sessionReadOneData(Session_Storage_Account)
+};
