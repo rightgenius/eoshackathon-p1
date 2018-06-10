@@ -1,5 +1,6 @@
-import {Session_Storage_Account, sessionReadOneData} from "./sessionStorage";
+// import {Session_Storage_Account, sessionReadOneData} from "./sessionStorage";
 
 export const getAccountName=()=>{
-    return sessionReadOneData(Session_Storage_Account)
+    return 'bob';
+    // return sessionReadOneData(Session_Storage_Account)
 };
