@@ -5,11 +5,13 @@ import React from 'react'
 import FlexContainer from "../../common/FlexContainer/index";
 import {getAccountName} from "../../util/index";
 import {Token_Symbol} from "../../eosjs/conststr";
-import {cancelPayRequest, confirmPayRequest} from "../../eosjs";
+import {confirmPayRequest} from "../../eosjs";
+import {ActivityIndicator} from 'antd-mobile'
 
 class PayMentContainer extends React.Component {
     state = {
         pross: 0,
+        loading: false,
     };
 
     componentDidMount() {
@@ -20,23 +22,36 @@ class PayMentContainer extends React.Component {
         e.stopPropagation();
         const {payMent = {}} = this.props;
         const {paymentcode} = payMent;
+        this.setState({
+            loading: true
+        });
         confirmPayRequest(paymentcode).then(result => {
             if (result) {
                 this.setState({
                     pross: 1
+                });
+                this.setState({
+                    loading: false
                 })
             }
         })
     };
 
+
     _decline = (e) => {
         e.stopPropagation();
         const {payMent = {}} = this.props;
         const {paymentcode} = payMent;
+        this.setState({
+            loading: true
+        });
         cancelPayRequest(paymentcode).then(result => {
             if (result) {
                 this.setState({
                     pross: -1
+                });
+                this.setState({
+                    loading: false
                 })
             }
         })
@@ -44,7 +59,7 @@ class PayMentContainer extends React.Component {
     };
 
     render() {
-        const {pross} = this.state;
+        const {pross, loading} = this.state;
         const {payMent = {}} = this.props;
         const {charger, quantity} = payMent;
         const quantityValue = quantity.split(Token_Symbol)[0];
@@ -69,29 +84,46 @@ class PayMentContainer extends React.Component {
                     <div style={{fontSize: 36, marginTop: 124}}>{quantityValue}</div>
                     <div style={{fontSize: 12, marginTop: 8}}>{Token_Symbol}</div>
                 </FlexContainer>
-                <div style={{
-                    width: '70%',
-                    height: '56px',
-                    borderRadius: '56px',
-                    fontSize: 18,
-                    textAlign: 'center',
-                    lineHeight: '56px',
-                    backgroundColor: '#fff',
-                    color: '#558C17',
-                    marginTop: '36px'
-                }} onClick={this._confirm}>
-                    confirm
-                </div>
-                <div style={{
-                    width: '70%',
-                    height: '56px',
-                    borderRadius: '56px',
-                    fontSize: 18, textAlign: 'center',
-                    lineHeight: '56px',
-                    color: '#FF7600 ', marginTop: '10px'
-                }} onClick={this._decline}>
-                    decline
-                </div>
+                {
+                    loading === false
+                    &&
+                    <div style={{
+                        width: '70%',
+                        height: '56px',
+                        borderRadius: '56px',
+                        fontSize: 18,
+                        textAlign: 'center',
+                        lineHeight: '56px',
+                        backgroundColor: '#fff',
+                        color: '#558C17',
+                        marginTop: '36px'
+                    }} onClick={this._confirm}>
+                        confirm
+                    </div>
+
+                }
+                {
+                    loading === false
+                    &&
+                    <div style={{
+                        width: '70%',
+                        height: '56px',
+                        borderRadius: '56px',
+                        fontSize: 18, textAlign: 'center',
+                        lineHeight: '56px',
+                        color: '#FF7600 ', marginTop: '10px'
+                    }} onClick={this._decline}>
+                        decline
+                    </div>
+                }
+                {
+                    loading
+                    &&
+                    <FlexContainer justify='center'
+                                   style={{width: '100%', marginTop: '30'}}>
+                        <ActivityIndicator size={'large'}/>
+                    </FlexContainer>
+                }
             </FlexContainer>
         }
         return <FlexContainer style={{backgroundColor: 'transparent'}}
