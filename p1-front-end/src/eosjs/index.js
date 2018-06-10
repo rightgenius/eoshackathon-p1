@@ -4,7 +4,7 @@ import {Token_Symbol} from "./conststr";
 
 const EOS_CONFIG = {
     contractToken: 'eosio.token',
-    contractName: 'pay.charge3',
+    contractName: 'pay.charge',
     // contractSender: "user.a", // User executing the contract (should be paired with private key)
     clientConfig: {
         keyProvider: ['5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3'], // Your private key

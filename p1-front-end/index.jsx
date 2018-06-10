@@ -42,12 +42,12 @@ ReactDOM.render(
             <Route path="/order" component={OrderPayContainer}/>
 
             <Route path="/p" component={()=>{
-                sessionSaveOneData(Session_Storage_Account,'user.a');
+                sessionSaveOneData(Session_Storage_Account,'alice');
                 hashHistory.push('/');
                 return null
             }}/>
             <Route path="/s" component={()=>{
-                sessionSaveOneData(Session_Storage_Account,'user.b');
+                sessionSaveOneData(Session_Storage_Account,'bob');
                 hashHistory.push('/');
                 return null
             }}/>
