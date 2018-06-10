@@ -5,8 +5,11 @@ import {Router, Route, hashHistory, IndexRoute,} from 'react-router';
 import HomeContainer from './src/components/home'
 import PayContainer from './src/components/pay'
 import ChargeContainer from './src/components/charge'
-import './index.less';
+import OrderPayContainer from './src/components/order'
+
 import {Session_Storage_Account, sessionSaveOneData} from "./src/util/sessionStorage";
+
+import './index.less';
 
 class App extends React.Component {
     constructor(props) {
@@ -36,6 +39,8 @@ ReactDOM.render(
             <IndexRoute component={HomeContainer}/>
             <Route path="/pay" component={PayContainer}/>
             <Route path="/charge" component={ChargeContainer}/>
+            <Route path="/order" component={OrderPayContainer}/>
+
             <Route path="/p" component={()=>{
                 sessionSaveOneData(Session_Storage_Account,'user.a');
                 hashHistory.push('/');

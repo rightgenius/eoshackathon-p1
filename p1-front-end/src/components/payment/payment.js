@@ -9,7 +9,7 @@ import {confirmPayRequest} from "../../eosjs";
 
 class PayMentContainer extends React.Component {
     state = {
-        pross: -1,
+        pross: 0,
     };
 
     componentDidMount() {

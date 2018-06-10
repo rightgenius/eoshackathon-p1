@@ -32,9 +32,6 @@ export default class PayContainer extends React.Component {
                              title='Pay'>
                 <div style={{padding: '20px'}}>
                     <FlexContainer className='pay-box-container' direction='column' style={{padding: '28px 0'}}>
-                        {/*<div className='empty-fill' style={{width: '80%', height: 80,}}>*/}
-
-                        {/*</div>*/}
                         <div className='empty-fill' style={{width: 300, height: 300, marginTop: 20,backgroundColor:'#fff'}}>
                             <QRCode style={{margin:'20px 0 0 20px'}} value={
                                 JSON.stringify({
@@ -43,25 +40,30 @@ export default class PayContainer extends React.Component {
                                 })} size={260}/>
                         </div>
                     </FlexContainer>
-                    <div className='pay-box-container'
-                         style={{padding: '10px 20px 20px 20px', marginTop: '20'}}>
-                        <div style={{color: '#a0a0a0', fontSize: 12}}>
-                            account
-                        </div>
-                        <FlexContainer justify='between' style={{marginTop: 4}}>
-                            <div>
-                                {getAccountName()}
+
+                    <FlexContainer direction='column' style={{ marginTop: '0',width:'100%'}}>
+                        <img src={require('./tipuptriangle.png')} style={{width:11}}/>
+                        <div className='pay-box-container'
+                             style={{padding: '10px 20px 20px 20px',width:'80%'}}>
+                            <div style={{color: '#a0a0a0', fontSize: 12}}>
+                                account
                             </div>
-                            <div>
+                            <FlexContainer justify='between' style={{marginTop: 4,width:'100%'}}>
+                                <div>
+                                    {getAccountName()}
+                                </div>
+                                <div>
                                 <span style={{fontFamily: 'Rubik-Medium', fontSize: 14, color: '#31639C'}}>
                                     <BalanceContainer/>
                                 </span>
-                                <span style={{fontSize: 12, color: '#31639C', marginLeft: 4}}>
+                                    <span style={{fontSize: 12, color: '#31639C', marginLeft: 4}}>
                                     {Token_Symbol}
                                 </span>
-                            </div>
-                        </FlexContainer>
-                    </div>
+                                </div>
+                            </FlexContainer>
+                        </div>
+                    </FlexContainer>
+
                 </div>
             </PayOneContainer>
         )

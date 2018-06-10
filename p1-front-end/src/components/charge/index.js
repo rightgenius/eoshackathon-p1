@@ -9,6 +9,7 @@ import {getAccountName} from "../../util";
 import {Toast} from 'antd-mobile'
 import './charge.less'
 import {requireCharge} from "../../eosjs";
+import {hashHistory} from "react-router";
 
 
 export default class PayContainer extends React.Component {
@@ -19,11 +20,14 @@ export default class PayContainer extends React.Component {
     };
 
     componentDidMount() {
-       // this.setState({
-       //     inputValue:1,
-       // },()=>{
-       //     this._requreCharge('user.a','77845')
-       // })
+        // this.setState({
+        //     inputValue:1,
+        // },()=>{
+        //     this._requreCharge('user.a','77845')
+        // })
+        setTimeout(()=>{
+            document.getElementById('scan-inputer').focus()
+        },1000)
     }
 
     _confirm = () => {
@@ -43,11 +47,11 @@ export default class PayContainer extends React.Component {
     };
 
     _requreCharge = (payer, code) => {
-        const {inputValue}=this.state;
-        if(Number(inputValue)>0){
-            requireCharge(inputValue,code,payer).then(result => {
+        const {inputValue} = this.state;
+        if (Number(inputValue) > 0) {
+            requireCharge(inputValue, code, payer).then(result => {
                 if (result) {
-                    Toast.loading(`${payer} is Paying`)
+                    Toast.info(`${payer} is Paying`)
                 }
             })
         }
@@ -55,23 +59,32 @@ export default class PayContainer extends React.Component {
 
     _submit = () => {
         const {scanerInputValue} = this.state;
-        try {
-            const payInfo = JSON.parse(scanerInputValue);
-            const {n, c} = payInfo;
 
-            console.log(`payInfo`,payInfo);
-            console.log(`n,c`,n,c);
+        console.log(`scanerInputValue`,scanerInputValue);
+        if(scanerInputValue==='90162602'){
+            hashHistory.push('/order?p=90162602');
+        }
+        else {
+            try {
+                const payInfo = JSON.parse(scanerInputValue);
+                const {n, c} = payInfo;
 
-            if (n && c) {
-                this._requreCharge(n, c);
+                console.log(`payInfo`, payInfo);
+                console.log(`n,c`, n, c);
+
+                if (n && c) {
+                    this._requreCharge(n, c);
+                }
+                else {
+                    this._resetScanInput();
+                }
             }
-            else {
+            catch (err) {
                 this._resetScanInput();
             }
         }
-        catch (err) {
-            this._resetScanInput();
-        }
+
+
     };
 
     render() {
@@ -109,7 +122,7 @@ export default class PayContainer extends React.Component {
                     {
                         pross === 1
                         &&
-                        <img src={require('./barscannericon@3x.png')}
+                        <img src={require('./barscannericon.png')}
                              style={{width: 32, marginTop: 20}}/>
                     }
                     {
@@ -146,9 +159,8 @@ export default class PayContainer extends React.Component {
                         </div>
                     }
                     {
-                        pross === 1
-                        &&
-                        <input id='scan-inputer' value={this.state.scanerInputValue}
+                        <input id='scan-inputer'
+                               value={this.state.scanerInputValue}
                                style={{opacity: 0}}
                                onKeyPress={e => {
                                    if (e.key === 'Enter') {

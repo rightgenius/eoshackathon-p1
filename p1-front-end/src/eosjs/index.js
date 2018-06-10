@@ -30,8 +30,8 @@ export const getAPayMentRequest = async () => {
     const result = await eosClient.getTableRows({
         json: true, code: EOS_CONFIG.contractName,
         scope: getAccountName(), table: 'chargeinfos'
-    })
-    console.log(`getAPayMentRequest`,result)
+    });
+    console.log(`getAPayMentRequest`,result);
     const {rows} = result;
     for (const row of rows) {
         const {state = 0} = row;
@@ -40,18 +40,35 @@ export const getAPayMentRequest = async () => {
         }
     }
     return {};
-}
+};
+
+export const getWaitingPayMent= async (target,code) => {
+    const result = await eosClient.getTableRows({
+        json: true, code: EOS_CONFIG.contractName,
+        scope: target, table: 'chargeinfos'
+    });
+    console.log(`getWaitingPayMent`,target,code,result);
+    const {rows} = result;
+    for (const row of rows) {
+        const {paymentcode = ''} = row;
+        if (String(paymentcode) === code) {
+            return row;
+        }
+    }
+    return null;
+};
+
 //
 export const confirmPayRequest = async (payment_code) => {
     const chargeContract = await getChargeContract();
     const payer=getAccountName();
-    console.log(chargeContract)
-    chargeContract.confirm()
+    console.log(chargeContract);
+    chargeContract.confirm();
     console.log(`confirmPayRequest`,payment_code,payer);
     const trans = await chargeContract.confirm(payment_code,payer, {authorization: payer});
     console.log(trans);
     return !!trans;
-}
+};
 
 export const getBalance = async () => {
     const result = await eosClient.getCurrencyBalance(EOS_CONFIG.contractToken, getAccountName(), Token_Symbol);
@@ -65,7 +82,7 @@ export const getBalance = async () => {
 
 export const getChargeContract = async () => {
     return await eosClient.contract(EOS_CONFIG.contractName)
-}
+};
 
 export const requireCharge = async (quantity, payment_code, payer) => {
     const charger = getAccountName();
