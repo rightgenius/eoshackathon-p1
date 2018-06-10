@@ -70,6 +70,17 @@ export const confirmPayRequest = async (payment_code) => {
     return !!trans;
 };
 
+export const cancelPayRequest = async (payment_code) => {
+    const chargeContract = await getChargeContract();
+    const payer=getAccountName();
+    console.log(chargeContract);
+    chargeContract.cancel();
+    console.log(`cancelPayRequest`,payment_code,payer);
+    const trans = await chargeContract.cancel(payment_code,payer, {authorization: payer});
+    console.log(trans);
+    return !!trans;
+};
+
 export const getBalance = async () => {
     const result = await eosClient.getCurrencyBalance(EOS_CONFIG.contractToken, getAccountName(), Token_Symbol);
     console.log(`getCurrencyBalance`, result);

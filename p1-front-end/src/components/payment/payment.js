@@ -5,7 +5,7 @@ import React from 'react'
 import FlexContainer from "../../common/FlexContainer/index";
 import {getAccountName} from "../../util/index";
 import {Token_Symbol} from "../../eosjs/conststr";
-import {confirmPayRequest} from "../../eosjs";
+import {cancelPayRequest, confirmPayRequest} from "../../eosjs";
 
 class PayMentContainer extends React.Component {
     state = {
@@ -31,9 +31,16 @@ class PayMentContainer extends React.Component {
 
     _decline = (e) => {
         e.stopPropagation();
-        this.setState({
-            pross: -1
+        const {payMent = {}} = this.props;
+        const {paymentcode} = payMent;
+        cancelPayRequest(paymentcode).then(result => {
+            if (result) {
+                this.setState({
+                    pross: -1
+                })
+            }
         })
+
     };
 
     render() {
