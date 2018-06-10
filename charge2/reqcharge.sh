@@ -13,7 +13,7 @@ cleos push action pay.charge cancel '["12348", "alice"]' -p alice
 echo "should fail after this"
 
 cleos push action pay.charge confirm '["12348", "alice"]' -p alice
-cleos push action pay.charge cancel '["12348", "alice"]' -p alice
+cleos push action pay.charge cancel '["12348", "alice", "bob"]' -p alice
 
 #cleos push action pay.charge create '["12348", "bob"]' -p bob
 cleos get table pay.charge alice chargeinfos
