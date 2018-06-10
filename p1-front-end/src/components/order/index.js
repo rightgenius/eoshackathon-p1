@@ -7,6 +7,7 @@ import FlexContainer from "../../common/FlexContainer";
 import {Toast} from 'antd-mobile'
 import {requireCharge} from "../../eosjs";
 import {polling4PayMent} from "../../eosjs/seller";
+// import {hashHistory} from "react-router";
 
 
 export default class OrderPayContainer extends React.Component {
@@ -15,6 +16,8 @@ export default class OrderPayContainer extends React.Component {
         inputValue: '',
         scanerInputValue: '',
         payState:-1,
+        buyCount:1,
+        productPrice:2,
     };
 
     componentDidMount() {
@@ -36,12 +39,13 @@ export default class OrderPayContainer extends React.Component {
             scanerInputValue: ''
         }, () => {
             document.getElementById('scan-inputer-h').focus()
-            Toast.info('Rescan...')
+            Toast.info('Waiting Rescan...')
         })
     };
 
     _requreCharge = (payer, code) => {
-        requireCharge(2.5, code, payer).then(result => {
+        const {productPrice,buyCount}=this.state;
+        requireCharge(productPrice*buyCount, code, payer).then(result => {
             if (result) {
                 Toast.info(`${payer} is Paying`)
                 polling4PayMent(payer,code,(success)=>{
@@ -64,27 +68,37 @@ export default class OrderPayContainer extends React.Component {
     _submit = () => {
         const {scanerInputValue} = this.state;
         console.log(`scanerInputValue`, scanerInputValue);
-        try {
-            const payInfo = JSON.parse(scanerInputValue);
-            const {n, c} = payInfo;
+        if(scanerInputValue==='90162602'){
+            this.setState({
+                buyCount:this.state.buyCount+1
+            },()=>{
+                this._resetScanInput()
+            })
+        }
+        else {
+            try {
+                const payInfo = JSON.parse(scanerInputValue);
+                const {n, c} = payInfo;
 
-            console.log(`payInfo`, payInfo);
-            console.log(`n,c`, n, c);
+                console.log(`payInfo`, payInfo);
+                console.log(`n,c`, n, c);
 
-            if (n && c) {
-                this._requreCharge(n, c);
+                if (n && c) {
+                    this._requreCharge(n, c);
+                }
+                else {
+                    this._resetScanInput();
+                }
             }
-            else {
+            catch (err) {
                 this._resetScanInput();
             }
         }
-        catch (err) {
-            this._resetScanInput();
-        }
+
     };
 
     render() {
-        const {payState} = this.state;
+        const {payState,buyCount} = this.state;
         const lineClassName=payState===1?'linear-background3':(payState===2?'linear-background7':'linear-background1')
         return (
             <PayOneContainer className={`${lineClassName} container`}
@@ -133,11 +147,11 @@ export default class OrderPayContainer extends React.Component {
                                     The Only Magical Water We Can Find
                                 </div>
                                 <div style={{color: '#4A90E2', fontSize: '14', marginTop: 6}}>
-                                    2.5 SYS
+                                    {`${Number(this.state.productPrice).toFixed(4)} SYS`}
                                 </div>
                             </FlexContainer>
                             <div style={{whiteSpace: 'nowrap', color: '#4A90E2', fontSize: '14'}}>
-                                {`X 1`}
+                                {`X ${buyCount}`}
                             </div>
                         </FlexContainer>
                         <div style={{height: '1px', backgroundColor: '#d1d1d1', width: '80%', marginLeft: '10%'}}/>
@@ -145,7 +159,7 @@ export default class OrderPayContainer extends React.Component {
                     <FlexContainer justify='end' style={{marginTop: 20, width: '80%'}}>
                         <div style={{color: '#fff', fontSize: '32', marginRight: '20', textAlign: 'right'}}>
                             <div>
-                                2.5000
+                                {Number(this.state.productPrice*this.state.buyCount).toFixed(4)}
                             </div>
                             <div style={{fontSize: '20'}}>
                                 SYS

@@ -7,7 +7,7 @@ const EOS_CONFIG = {
     contractName: 'pay.charge',
     // contractSender: "user.a", // User executing the contract (should be paired with private key)
     clientConfig: {
-        keyProvider: ['5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3'], // Your private key
+        keyProvider: ['5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3q','5HqnoZq9DXGjL3dx3vkqMR9fvqxavBtJM4kadbT3xXwLf4ECKKH','5JTTgZhoHPtVYhYDzytMNijm2HguchVb563oaGaY2z2ZxQsdxC3'], // Your private key
         httpEndpoint: 'http://10.101.1.58:8888' // EOS http endpoint
     }
 };
